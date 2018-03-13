@@ -38,27 +38,27 @@ func work() {
     guard let diffResult = _exec("git diff \(firstBranch) \(secondBranch)") else {
         return
     }
-    let scanner = Scanner(string: diffResult)
     var contents: [String] = []
-    while scanner.isAtEnd == false {
-        var content = ""
-        var tmp: NSString?
-        if scanner.scanString("diff --git a/", into: &tmp) {
-            content += tmp! as String
+    var content = ""
+    diffResult.split(separator: "\n").forEach {
+        if $0.hasPrefix("diff --git a") {
+            if content.isEmpty == false {
+                contents.append(content)
+            }
+            content = "\(String($0))\n"
         } else {
-            break
+            content += "\(String($0))\n"
         }
-        if scanner.scanUpTo("diff --git a/", into: &tmp) {
-            content += tmp! as String
-        } else {
-            break;
-        }
+    }
+    if content.isEmpty == false {
         contents.append(content)
     }
+
     for (idx, content) in contents.enumerated() {
         let lines = content.split(separator: "\n")
         if let index = lines.first?.range(of: "/", options: .backwards, range: nil, locale: nil) {
-            printc.println(text: String(lines.first![index.upperBound...]), marks: .red, .bold)
+            let title = "\(idx + 1). **\(String(lines.first![index.upperBound...]))**"
+            printc.println(text: title, marks: .red, .bold)
         }
         var index = 0
         while lines[index].first != "@" {
