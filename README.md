@@ -1,2 +1,3 @@
 # diff
-Make `git diff &lt;branch> &lt;branch>` look comfortable.
+
+Make 'git diff <branch> <branch>' look comfortable.
